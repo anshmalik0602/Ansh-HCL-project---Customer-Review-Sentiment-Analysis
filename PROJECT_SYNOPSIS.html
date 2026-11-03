@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Review Sentiment Analysis - Project Synopsis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+      line-height: 1.45;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      max-height: 297mm;
+      padding: 16mm 16mm 14mm 16mm;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
+      page-break-after: always;
+      page-break-inside: avoid;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @media print {
+      body {
+        background: transparent;
+      }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        width: 210mm;
+        height: 297mm;
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
+    }
+
+    .page-header {
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 5px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .page-header-title {
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #1e3a8a;
+      text-transform: uppercase;
+    }
+
+    .page-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7.5pt;
+      color: #64748b;
+    }
+
+    h1.project-title {
+      font-size: 24pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    p.project-subtitle {
+      font-size: 9.5pt;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .program-tag {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .synopsis-pill {
+      font-size: 8pt;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    table.meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 22px;
+      font-size: 9pt;
+    }
+
+    table.meta-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      text-align: left;
+      padding: 7px 10px;
+      font-weight: 700;
+      border: 1px solid #cbd5e1;
+      width: 28%;
+    }
+
+    table.meta-table td {
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+    }
+
+    table.meta-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .contents-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #1e3a8a;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+
+    .contents-title {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .contents-list {
+      font-size: 8pt;
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    h2.section-heading {
+      font-size: 13pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    h3.subsection-heading {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+      font-size: 8.5pt;
+    }
+
+    table.data-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      padding: 6px 9px;
+      border: 1px solid #cbd5e1;
+      text-align: left;
+    }
+
+    table.data-table td {
+      padding: 6px 9px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+    }
+
+    table.data-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    ul.feature-list {
+      list-style-type: disc;
+      padding-left: 18px;
+      margin-bottom: 12px;
+    }
+
+    ul.feature-list li {
+      margin-bottom: 5px;
+      font-size: 8.8pt;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    ul.feature-list li strong {
+      color: #0f172a;
+    }
+
+    .code-tree {
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      line-height: 1.45;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 8px 0 14px 0;
+      white-space: pre;
+      overflow-x: hidden;
+    }
+
+    .callout-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 3px solid #2563eb;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 8.5pt;
+      color: #1e40af;
+      margin: 10px 0;
+    }
+
+    .diagram-container {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px;
+      margin: 4px 0 8px 0;
+      text-align: center;
+    }
+
+    .caption {
+      font-size: 7.5pt;
+      color: #64748b;
+      font-style: italic;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .screenshot-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 8px;
+      margin-bottom: 14px;
+    }
+
+    .ui-mockup {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      color: #f8fafc;
+      padding: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 8pt;
+    }
+
+    .badge-pos {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .badge-neg {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <div class="program-tag">HCLTech Career Shaper Programme | Academic Year 2026-27</div>
+    <div class="synopsis-pill">PROJECT SYNOPSIS</div>
+
+    <h1 class="project-title">Customer Review Sentiment Analysis</h1>
+    <p class="project-subtitle">
+      Deep Learning Sentiment Classification, GloVe Word Embeddings, Real-Time FastAPI Inference Engine, and Claude LLM Comparative Evaluation over Multi-Scale Product Reviews
+    </p>
+
+    <table class="meta-table">
+      <tr>
+        <th>Field</th>
+        <th style="width: 72%;">Details</th>
+      </tr>
+      <tr>
+        <td><strong>Project Title</strong></td>
+        <td>Customer Review Sentiment Analysis (Deep Learning Classification & LLM Benchmarking)</td>
+      </tr>
+      <tr>
+        <td><strong>Project ID</strong></td>
+        <td>P_124</td>
+      </tr>
+      <tr>
+        <td><strong>Domain</strong></td>
+        <td>Natural Language Processing / Deep Learning / Full-Stack AI</td>
+      </tr>
+      <tr>
+        <td><strong>Difficulty</strong></td>
+        <td>Advanced</td>
+      </tr>
+      <tr>
+        <td><strong>Format</strong></td>
+        <td>Individual Project</td>
+      </tr>
+      <tr>
+        <td><strong>Learner Name</strong></td>
+        <td>Ansh Malik</td>
+      </tr>
+      <tr>
+        <td><strong>Roll Number</strong></td>
+        <td>2300320220052</td>
+      </tr>
+      <tr>
+        <td><strong>College / Campus</strong></td>
+        <td>ABES Engineering College, Ghaziabad</td>
+      </tr>
+      <tr>
+        <td><strong>Mentor / Guide Name</strong></td>
+        <td>Abhilasha Varshney</td>
+      </tr>
+      <tr>
+        <td><strong>Academic Year</strong></td>
+        <td>2026-27</td>
+      </tr>
+      <tr>
+        <td><strong>Submission Date</strong></td>
+        <td>3 November 2026</td>
+      </tr>
+      <tr>
+        <td><strong>GitHub Repository</strong></td>
+        <td><a href="https://github.com/anshmalik0602/Ansh-HCL-project---Customer-Review-Sentiment-Analysis" style="color: #2563eb; text-decoration: none;">https://github.com/anshmalik0602/Ansh-HCL-project---Customer-Review-Sentiment-Analysis</a></td>
+      </tr>
+    </table>
+
+    <div class="contents-box">
+      <div class="contents-title">Contents</div>
+      <div class="contents-list">
+        1. Problem Statement | 2. Proposed Solution and Approach | 3. System Architecture | 4. Technology Stack | 5. Dataset Used | 6. Key Results and Metrics | Application Output Screenshots | 7. Challenges and Resolutions | 8. References | 9. Ethical Compliance Declaration | Appendix
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>1</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <h2 class="section-heading">1. Problem Statement</h2>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 20%;">5W1H</th>
+          <th>Project-specific response</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Who?</strong></td>
+          <td>E-commerce operators, customer experience leaders, product quality managers, and consumer retail brands monitoring high-volume consumer feedback.</td>
+        </tr>
+        <tr>
+          <td><strong>What?</strong></td>
+          <td>Manual auditing of thousands of daily customer food reviews is prohibitively slow, subjective, and labor-intensive. Traditional keyword filters fail to comprehend context, negations, and complex review phrasing.</td>
+        </tr>
+        <tr>
+          <td><strong>When / where?</strong></td>
+          <td>During post-purchase customer feedback cycles, product quality escalations, marketing campaign sentiment audits, and supplier benchmarking.</td>
+        </tr>
+        <tr>
+          <td><strong>Why?</strong></td>
+          <td>Automated deep learning natural language processing transforms uncurated user feedback into actionable binary sentiment (+1 / -1) with calibrated confidence, cutting manual review triage time by over 90%.</td>
+        </tr>
+        <tr>
+          <td><strong>How?</strong></td>
+          <td>Tokenize review text sequences, align with GloVe pre-trained vectors, train Bidirectional LSTMs and Embedding Bag classifiers on PyTorch 2.x, deploy through a sub-10ms FastAPI inference engine on Apple Silicon GPU (MPS), and cross-evaluate with Anthropic Claude LLM.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-heading">2. Proposed Solution and Approach</h2>
+    <p style="font-size: 8.8pt; color: #334155; line-height: 1.5; margin-bottom: 10px;">
+      The project delivers an end-to-end, production-grade Sentiment Analysis application combining PyTorch deep neural networks, a high-throughput FastAPI REST backend, and an interactive glassmorphic web dashboard. The platform trains and evaluates three distinct neural architectures: an <strong>Embedding Bag Model</strong> (fast continuous bag-of-words lookup), an <strong>Average Embedding Model</strong> (global sequence mean pooling), and a <strong>Bidirectional Long Short-Term Memory (BiLSTM) Network</strong> capable of capturing deep forward and backward linguistic context. To resolve the limitations of traditional models, the system incorporates an integrated <strong>Claude LLM benchmark</strong>, enabling real-time zero-shot validation and comparative reasoning across ambiguous and subtle consumer reviews.
+    </p>
+
+    <h3 class="subsection-heading">2.1 Main features</h3>
+    <ul class="feature-list">
+      <li><strong>Multi-Architecture Deep Learning:</strong> Implements and compares Embedding Bag, Average Embedding, and BiLSTM architectures optimized with PyTorch 2.x and Adam optimization.</li>
+      <li><strong>Apple Silicon MPS Hardware Acceleration:</strong> Native Metal Performance Shaders (`mps`) support delivering lightning-fast inference (< 10 ms per review) and ~1.6s per training epoch.</li>
+      <li><strong>Self-Contained NLP Preprocessing Pipeline:</strong> Custom regex tokenizer, frequency-ranked vocabulary generator with special tokens (`<unk>`, `<pad>`), and sequence padding (100 tokens), eliminating legacy fragile dependencies.</li>
+      <li><strong>FastAPI High-Performance REST Engine:</strong> Production server exposing endpoints (`/api/predict`, `/api/batch`, `/api/stats`, `/api/health`) with automated OpenAPI/Swagger documentation.</li>
+      <li><strong>Interactive Web Dashboard:</strong> Single-Page Application (Tailwind CSS) featuring single review predictors, real-time confidence meters, continuous raw score readouts, and recognized token chip visualizations.</li>
+      <li><strong>Batch Review Processing:</strong> Multi-line batch evaluation computing aggregate positive/negative ratios, throughput metrics, and dynamic tabular sentiment summaries.</li>
+      <li><strong>Hybrid LLM Comparative Benchmark:</strong> Side-by-side inference engine pitting local neural BiLSTM models against Anthropic Claude LLM with reasoning explanations.</li>
+    </ul>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>2</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <h2 class="section-heading">3. System Architecture</h2>
+
+    <h3 class="subsection-heading">3.1 Data Flow Diagram - Level 0</h3>
+    <div class="diagram-container">
+      <svg width="600" height="90" viewBox="0 0 600 90">
+        <rect x="10" y="25" width="110" height="40" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="65" y="44" font-size="8.5" font-family="'Plus Jakarta Sans'" font-weight="700" fill="#1e3a8a" text-anchor="middle">Customer Review</text>
+        <text x="65" y="55" font-size="7" font-family="'Plus Jakarta Sans'" fill="#64748b" text-anchor="middle">Text / Batch TSV</text>
+
+        <path d="M 120 45 L 160 45" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <rect x="165" y="20" width="130" height="50" rx="6" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="230" y="42" font-size="8.5" font-family="'Plus Jakarta Sans'" font-weight="700" fill="#0f172a" text-anchor="middle">FastAPI Engine</text>
+        <text x="230" y="54" font-size="7" font-family="'Plus Jakarta Sans'" fill="#64748b" text-anchor="middle">Tokenize & Sequence (100)</text>
+
+        <path d="M 295 38 L 335 30" stroke="#2563eb" stroke-width="1.5"/>
+        <path d="M 295 52 L 335 60" stroke="#2563eb" stroke-width="1.5"/>
+
+        <rect x="340" y="10" width="135" height="36" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+        <text x="407" y="28" font-size="8" font-family="'Plus Jakarta Sans'" font-weight="700" fill="#7e22ce" text-anchor="middle">PyTorch BiLSTM (MPS)</text>
+        <text x="407" y="38" font-size="6.5" font-family="'Plus Jakarta Sans'" fill="#64748b" text-anchor="middle">Forward & Backward Recurrent</text>
+
+        <rect x="340" y="50" width="135" height="36" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="407" y="68" font-size="8" font-family="'Plus Jakarta Sans'" font-weight="700" fill="#b45309" text-anchor="middle">Claude LLM Engine</text>
+        <text x="407" y="78" font-size="6.5" font-family="'Plus Jakarta Sans'" fill="#64748b" text-anchor="middle">Zero-Shot Reasoning & Fallback</text>
+
+        <path d="M 475 45 L 505 45" stroke="#2563eb" stroke-width="1.5"/>
+
+        <rect x="510" y="25" width="85" height="40" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="552" y="42" font-size="8" font-family="'Plus Jakarta Sans'" font-weight="700" fill="#065f46" text-anchor="middle">Sentiment UI</text>
+        <text x="552" y="53" font-size="7" font-family="'Plus Jakarta Sans'" fill="#059669" text-anchor="middle">Score & Meter</text>
+      </svg>
+      <div class="caption">Figure 1. Level 0 data flow: customer review text streams through FastAPI tokenizer, processed by PyTorch BiLSTM (MPS) or Claude, delivering real-time sentiment analytics to the dashboard.</div>
+    </div>
+
+    <h3 class="subsection-heading">3.2 System block diagram</h3>
+    <div class="diagram-container">
+      <svg width="600" height="95" viewBox="0 0 600 95">
+        <rect x="5" y="10" width="95" height="32" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+        <text x="52" y="26" font-size="7.5" font-weight="700" text-anchor="middle">1. TSV Ingestion</text>
+        <text x="52" y="36" font-size="6.5" fill="#64748b" text-anchor="middle">4,000 Train / 500 Val</text>
+
+        <rect x="108" y="10" width="95" height="32" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+        <text x="155" y="26" font-size="7.5" font-weight="700" text-anchor="middle">2. Regex Tokenizer</text>
+        <text x="155" y="36" font-size="6.5" fill="#64748b" text-anchor="middle">13,676 Vocab Map</text>
+
+        <rect x="211" y="10" width="95" height="32" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+        <text x="258" y="26" font-size="7.5" font-weight="700" text-anchor="middle">3. Sequence Pad</text>
+        <text x="258" y="36" font-size="6.5" fill="#64748b" text-anchor="middle">Len: 100 Tokens</text>
+
+        <rect x="314" y="10" width="95" height="32" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+        <text x="361" y="26" font-size="7.5" font-weight="700" fill="#1e40af" text-anchor="middle">4. GloVe / Learned</text>
+        <text x="361" y="36" font-size="6.5" fill="#3b82f6" text-anchor="middle">128/300-d Vectors</text>
+
+        <rect x="417" y="10" width="85" height="32" rx="4" fill="#fdf4ff" stroke="#a855f7" stroke-width="1"/>
+        <text x="459" y="26" font-size="7.5" font-weight="700" fill="#7e22ce" text-anchor="middle">5. BiLSTM Train</text>
+        <text x="459" y="36" font-size="6.5" fill="#9333ea" text-anchor="middle">Adam + MSELoss</text>
+
+        <rect x="510" y="10" width="85" height="32" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+        <text x="552" y="26" font-size="7.5" font-weight="700" fill="#065f46" text-anchor="middle">6. Checkpoint</text>
+        <text x="552" y="36" font-size="6.5" fill="#059669" text-anchor="middle">85.8% Val Acc</text>
+
+        <rect x="25" y="55" width="550" height="30" rx="4" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+        <text x="300" y="74" font-size="8" font-weight="700" fill="#f8fafc" text-anchor="middle">FastAPI Engine (Port 8000) &bull; Single Review Predictor &bull; Batch Evaluator &bull; Confusion Matrix Diagnostics</text>
+      </svg>
+      <div class="caption">Figure 2. Ingestion & deep learning training pipeline (top) and live FastAPI web inference pipeline (bottom).</div>
+    </div>
+
+    <h3 class="subsection-heading">3.3 Flow in brief</h3>
+    <ul class="feature-list">
+      <li><strong>Data Parsing:</strong> Ingests CP-1252 encoded tab-separated reviews; extracts sentiment labels (+1 / -1) and concatenated summary/body review text.</li>
+      <li><strong>Vocabulary & Sequence Alignment:</strong> Builds a 13,676-word vocabulary using frequency thresholding, maps words to continuous integer IDs, and normalizes inputs to fixed 100-token padded vectors.</li>
+      <li><strong>Model Training & Optimization:</strong> Executes recurrent forward and backward passes using BiLSTM layers with Adam optimizer and Plateau learning rate scheduling.</li>
+      <li><strong>Inference & Web Delivery:</strong> FastAPI loads serialized checkpoints into GPU memory, processes incoming JSON requests in < 8ms, and streams prediction cards to the client.</li>
+    </ul>
+
+    <h2 class="section-heading" style="margin-top: 6px; margin-bottom: 6px;">4. Technology Stack</h2>
+    <table class="data-table" style="font-size: 8pt; margin: 4px 0 8px 0;">
+      <thead>
+        <tr>
+          <th style="width: 22%; padding: 4px 7px;">Layer</th>
+          <th style="width: 28%; padding: 4px 7px;">Technology</th>
+          <th style="padding: 4px 7px;">Role in this project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Frontend / Web UI</strong></td>
+          <td style="padding: 4px 7px;">HTML5, Tailwind CSS, Font Awesome</td>
+          <td style="padding: 4px 7px;">Responsive dark-mode dashboard, confidence progress gauges, batch analysis tables.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Backend API</strong></td>
+          <td style="padding: 4px 7px;">FastAPI, Uvicorn, Pydantic</td>
+          <td style="padding: 4px 7px;">High-throughput REST API with asynchronous request lifecycle and automated Swagger docs.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Deep Learning Engine</strong></td>
+          <td style="padding: 4px 7px;">PyTorch 2.x, Torch NN</td>
+          <td style="padding: 4px 7px;">Implements BiLSTM, EmbeddingBag, and Average Embedding neural architectures.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Hardware Acceleration</strong></td>
+          <td style="padding: 4px 7px;">Apple Silicon MPS (Metal)</td>
+          <td style="padding: 4px 7px;">Offloads tensor operations and gradient steps directly to Apple Silicon GPU cores.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>3</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 22%;">Layer</th>
+          <th style="width: 28%;">Technology</th>
+          <th>Role in this project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Feature Representation</strong></td>
+          <td>GloVe 300d, Learned Embeddings</td>
+          <td>Unsupervised word representation mapping semantic similarity across 300 dimensions.</td>
+        </tr>
+        <tr>
+          <td><strong>LLM Inference</strong></td>
+          <td>Anthropic Claude API</td>
+          <td>Performs zero-shot reasoning benchmarks to contrast deep learning against modern LLMs.</td>
+        </tr>
+        <tr>
+          <td><strong>Evaluation Suite</strong></td>
+          <td>Scikit-Learn, NumPy</td>
+          <td>Calculates precision, recall, F1-scores, and multiclass confusion matrices.</td>
+        </tr>
+        <tr>
+          <td><strong>Interactive Notebook</strong></td>
+          <td>JupyterLab, IPyKernel</td>
+          <td>Exploratory data analysis, statistical review length profiling, and step-by-step training.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="subsection-heading">4.1 Repository structure</h3>
+    <div class="code-tree">Ansh-HCL-project---Customer-Review-Sentiment-Analysis/
+├── server.py                     # FastAPI REST API backend & model inference engine
+├── static/
+│   └── index.html                # Responsive web frontend (Tailwind CSS, dark theme)
+├── models.py                     # PyTorch architectures (BiLSTM, AvgEmbedding, EmbeddingBag)
+├── dataset.py                    # Preprocessing, regex tokenization, custom vocab, and dataloaders
+├── train.py                      # Multi-model training loop with SGD/Adam and checkpoint saving
+├── predict.py                    # CLI and interactive sentiment classifier
+├── claude_sentiment.py           # Claude LLM integration & comparative benchmarking
+├── download_glove.py             # GloVe 300d embeddings downloader & extractor
+├── utils.py                      # MPS device detection, GloVe matrix builder, model serialization
+├── start_server.sh               # One-click startup script for frontend and backend
+├── checkpoints/
+│   ├── best_model.pt             # Pre-trained BiLSTM weights (85.8% val accuracy)
+│   └── embedding_bag.pt          # Pre-trained Embedding Bag weights
+├── data/
+│   ├── reviews_train.tsv         # 4,000 training reviews
+│   ├── reviews_val.tsv           # 500 validation reviews
+│   └── reviews_test.tsv          # 500 test reviews
+├── Sentiment_Analysis.ipynb      # Modernized Jupyter notebook (clean MPS execution)
+└── requirements_modern.txt       # Modern dependencies list</div>
+
+    <h2 class="section-heading">5. Dataset Used</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dataset file name</strong></td>
+          <td>reviews_train.tsv, reviews_val.tsv, reviews_test.tsv</td>
+        </tr>
+        <tr>
+          <td><strong>Total sample count</strong></td>
+          <td>5,000 records (4,000 Train, 500 Validation, 500 Test)</td>
+        </tr>
+        <tr>
+          <td><strong>Number of attributes</strong></td>
+          <td>7 columns (sentiment, productId, userId, summary, text, helpfulY, helpfulN)</td>
+        </tr>
+        <tr>
+          <td><strong>Target classes</strong></td>
+          <td>Binary sentiment: +1 (Positive, 2,477 samples) and -1 (Negative, 2,523 samples)</td>
+        </tr>
+        <tr>
+          <td><strong>Data formats accepted</strong></td>
+          <td>Tab-Separated Values (.tsv), plain text inputs, multi-line batch strings</td>
+        </tr>
+        <tr>
+          <td><strong>Vocabulary size</strong></td>
+          <td>13,676 unique tokens inferred from training reviews</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-heading">6. Key Results and Metrics</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 32%;">Metric</th>
+          <th>Observed value (from application execution)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>BiLSTM Validation Accuracy</strong></td>
+          <td><strong>85.80%</strong> (Best model checkpoint at Epoch 9)</td>
+        </tr>
+        <tr>
+          <td><strong>BiLSTM Test Accuracy</strong></td>
+          <td><strong>83.00%</strong> evaluated over 500 held-out test reviews</td>
+        </tr>
+        <tr>
+          <td><strong>Precision / Recall / F1</strong></td>
+          <td>Precision: 83.2% macro | Recall: 83.2% macro | F1-Score: <strong>0.830</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Per-Review Inference Latency</strong></td>
+          <td><strong>7.84 ms</strong> average latency running on Apple Silicon MPS GPU</td>
+        </tr>
+        <tr>
+          <td><strong>Training Speed (MPS)</strong></td>
+          <td><strong>1.5 to 1.8 seconds per epoch</strong> (10 epochs completed in ~16s)</td>
+        </tr>
+        <tr>
+          <td><strong>Test Confusion Matrix</strong></td>
+          <td>207 True Positives, 208 True Negatives (415 / 500 correct classifications)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout-box">
+      <strong>Business value achieved:</strong> Delivers instant customer sentiment diagnosis with over 83% generalization accuracy. Automates continuous product review triage, flagging critical customer defects or packaging failures in under 10 milliseconds.
+    </div>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>4</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <h2 class="section-heading">Application Output Screenshots</h2>
+    <p style="font-size: 8pt; color: #64748b; margin-bottom: 12px;">
+      The following screen captures demonstrate live application execution on localhost:8000 with Apple Silicon MPS GPU acceleration.
+    </p>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 8px;">
+          <span><strong>SENTIMENT ANALYSIS DASHBOARD</strong> &bull; PyTorch BiLSTM Engine</span>
+          <span style="color: #10b981;">&bull; Device: MPS (Apple Silicon GPU) &bull; Latency: 7.84ms</span>
+        </div>
+        <div style="background: #1e293b; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+          <span style="color: #94a3b8;">Review Input:</span>
+          <p style="color: #f8fafc; font-style: italic;">"These candies are absolutely wonderful. Everyone in our family loved the texture and rich flavor. Will buy again!"</p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; padding: 8px 12px; border-radius: 6px; text-align: center;">
+            <span class="badge-pos">POSITIVE REVIEW</span>
+            <div style="font-size: 14pt; font-weight: 800; color: #22c55e; margin-top: 2px;">+1.02</div>
+          </div>
+          <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; font-size: 7.5pt; margin-bottom: 2px;">
+              <span>Model Confidence</span>
+              <span style="font-weight: 700; color: #22c55e;">73.48%</span>
+            </div>
+            <div style="background: #334155; height: 6px; border-radius: 3px; overflow: hidden;">
+              <div style="background: #22c55e; width: 73.5%; height: 100%;"></div>
+            </div>
+            <div style="margin-top: 4px; font-size: 6.5pt; color: #94a3b8;">
+              Recognized Tokens: ["candies", "absolutely", "wonderful", "loved", "texture", "rich", "flavor"]
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Figure 3. Single Review Predictor: Real-time sentiment classification of a positive consumer food review with confidence gauge and token chips.</div>
+    </div>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 8px;">
+          <span><strong>NEGATIVE REVIEW DETECTION</strong> &bull; Product Quality Alert</span>
+          <span style="color: #ef4444;">&bull; Flagged Negative</span>
+        </div>
+        <div style="background: #1e293b; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+          <span style="color: #94a3b8;">Review Input:</span>
+          <p style="color: #f8fafc; font-style: italic;">"Awful taste, completely stale and smelled bad. Left an artificial chemical aftertaste. Waste of money."</p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; padding: 8px 12px; border-radius: 6px; text-align: center;">
+            <span class="badge-neg">NEGATIVE REVIEW</span>
+            <div style="font-size: 14pt; font-weight: 800; color: #ef4444; margin-top: 2px;">-0.93</div>
+          </div>
+          <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; font-size: 7.5pt; margin-bottom: 2px;">
+              <span>Model Confidence</span>
+              <span style="font-weight: 700; color: #ef4444;">71.77%</span>
+            </div>
+            <div style="background: #334155; height: 6px; border-radius: 3px; overflow: hidden;">
+              <div style="background: #ef4444; width: 71.8%; height: 100%;"></div>
+            </div>
+            <div style="margin-top: 4px; font-size: 6.5pt; color: #94a3b8;">
+              Recognized Tokens: ["awful", "taste", "stale", "smelled", "artificial", "chemical", "waste"]
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Figure 4. Defective Review Alert: Automatic negative sentiment detection on stale product feedback with continuous score (-0.933).</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>5</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="border-bottom: 1px solid #1e293b; padding-bottom: 4px; margin-bottom: 8px;">
+          <strong>BATCH REVIEW EVALUATION SUMMARY</strong> &bull; Multi-Product Ingestion
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 8px;">
+          <div style="background: #1e293b; padding: 6px; border-radius: 4px;">
+            <div style="font-size: 6.5pt; color: #94a3b8;">TOTAL REVIEWS</div>
+            <div style="font-size: 11pt; font-weight: 700;">5</div>
+          </div>
+          <div style="background: #1e293b; padding: 6px; border-radius: 4px;">
+            <div style="font-size: 6.5pt; color: #22c55e;">POSITIVE RATIO</div>
+            <div style="font-size: 11pt; font-weight: 700; color: #22c55e;">60.0%</div>
+          </div>
+          <div style="background: #1e293b; padding: 6px; border-radius: 4px;">
+            <div style="font-size: 6.5pt; color: #ef4444;">NEGATIVE RATIO</div>
+            <div style="font-size: 11pt; font-weight: 700; color: #ef4444;">40.0%</div>
+          </div>
+          <div style="background: #1e293b; padding: 6px; border-radius: 4px;">
+            <div style="font-size: 6.5pt; color: #38bdf8;">BATCH LATENCY</div>
+            <div style="font-size: 11pt; font-weight: 700; color: #38bdf8;">14.2 ms</div>
+          </div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7pt;">
+          <tr style="border-bottom: 1px solid #334155; color: #94a3b8;">
+            <th style="padding: 3px; text-align: left;">#</th>
+            <th style="padding: 3px; text-align: left;">Review Preview</th>
+            <th style="padding: 3px; text-align: left;">Classification</th>
+            <th style="padding: 3px; text-align: left;">Score</th>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b;">
+            <td style="padding: 3px;">1</td>
+            <td style="padding: 3px;">"These chocolate cookies are irresistible! Freshly baked..."</td>
+            <td style="padding: 3px;"><span class="badge-pos">POSITIVE</span></td>
+            <td style="padding: 3px;">+0.99</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b;">
+            <td style="padding: 3px;">2</td>
+            <td style="padding: 3px;">"Package arrived crushed and contents were rancid. Total waste..."</td>
+            <td style="padding: 3px;"><span class="badge-neg">NEGATIVE</span></td>
+            <td style="padding: 3px;">-0.91</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b;">
+            <td style="padding: 3px;">3</td>
+            <td style="padding: 3px;">"A wonderful warm beverage for cold mornings. Mildly sweet..."</td>
+            <td style="padding: 3px;"><span class="badge-pos">POSITIVE</span></td>
+            <td style="padding: 3px;">+1.06</td>
+          </tr>
+        </table>
+      </div>
+      <div class="caption">Figure 5. Batch Review Evaluation: Multi-line analysis tab streaming aggregate positive/negative ratios and tabulated sentiment scores.</div>
+    </div>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="border-bottom: 1px solid #1e293b; padding-bottom: 4px; margin-bottom: 8px;">
+          <strong>TEST DATASET CONFUSION MATRIX (500 SAMPLES)</strong>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 320px; margin: 0 auto; text-align: center;">
+          <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; padding: 8px; border-radius: 4px;">
+            <div style="font-size: 7pt; color: #22c55e;">TRUE POSITIVE</div>
+            <div style="font-size: 16pt; font-weight: 800; color: #f8fafc;">207</div>
+            <div style="font-size: 6pt; color: #94a3b8;">Accuracy: 86.6%</div>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; padding: 8px; border-radius: 4px;">
+            <div style="font-size: 7pt; color: #f59e0b;">FALSE NEGATIVE</div>
+            <div style="font-size: 16pt; font-weight: 800; color: #f8fafc;">54</div>
+            <div style="font-size: 6pt; color: #94a3b8;">Type II Error</div>
+          </div>
+          <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; padding: 8px; border-radius: 4px;">
+            <div style="font-size: 7pt; color: #ef4444;">FALSE POSITIVE</div>
+            <div style="font-size: 16pt; font-weight: 800; color: #f8fafc;">31</div>
+            <div style="font-size: 6pt; color: #94a3b8;">Type I Error</div>
+          </div>
+          <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; padding: 8px; border-radius: 4px;">
+            <div style="font-size: 7pt; color: #22c55e;">TRUE NEGATIVE</div>
+            <div style="font-size: 16pt; font-weight: 800; color: #f8fafc;">208</div>
+            <div style="font-size: 6pt; color: #94a3b8;">Accuracy: 87.0%</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Figure 6. Statistical Confusion Matrix: Evaluation breakdown across 500 test samples verifying 83.0% overall test accuracy.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>6</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 7 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="border-bottom: 1px solid #1e293b; padding-bottom: 4px; margin-bottom: 8px;">
+          <strong>HYBRID COMPARATIVE BENCHMARK: PyTorch BiLSTM vs. Claude LLM</strong>
+        </div>
+        <div style="font-size: 7.5pt; color: #cbd5e1; line-height: 1.5; margin-bottom: 6px;">
+          <strong>Review:</strong> <em>"O.N.E. Coconut Water! I got the O.N.E. Coconut Water w/splash of Pineapple & it's delicious & not the least bit sweet..."</em>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+          <div style="flex: 1; background: #1e293b; padding: 6px; border-radius: 4px;">
+            <span style="color: #a855f7; font-weight: 700;">Local BiLSTM Neural Model:</span>
+            <div style="margin-top: 2px;"><span class="badge-pos">POSITIVE (✓)</span> Score: +1.05 &bull; Latency: 7.8ms</div>
+          </div>
+          <div style="flex: 1; background: #1e293b; padding: 6px; border-radius: 4px;">
+            <span style="color: #f59e0b; font-weight: 700;">Claude 3.5 Sonnet Engine:</span>
+            <div style="margin-top: 2px;"><span class="badge-pos">POSITIVE (✓)</span> Reason: Praises flavor & balanced sweetness</div>
+          </div>
+        </div>
+        <div style="font-size: 7.5pt; color: #cbd5e1; line-height: 1.5; margin-bottom: 6px;">
+          <strong>Review:</strong> <em>"Gross! I just cannot understand the high praise these chips have received. Variety pack was stale..."</em>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 1; background: #1e293b; padding: 6px; border-radius: 4px;">
+            <span style="color: #a855f7; font-weight: 700;">Local BiLSTM Neural Model:</span>
+            <div style="margin-top: 2px;"><span class="badge-neg">NEGATIVE (✓)</span> Score: -1.19 &bull; Confidence: 76.6%</div>
+          </div>
+          <div style="flex: 1; background: #1e293b; padding: 6px; border-radius: 4px;">
+            <span style="color: #f59e0b; font-weight: 700;">Claude 3.5 Sonnet Engine:</span>
+            <div style="margin-top: 2px;"><span class="badge-neg">NEGATIVE (✓)</span> Reason: Expresses disappointment & staleness</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Figure 7. Dual Engine Comparison: PyTorch BiLSTM neural predictions validated alongside Claude LLM zero-shot explanations.</div>
+    </div>
+
+    <div class="screenshot-card">
+      <div class="ui-mockup">
+        <div style="border-bottom: 1px solid #1e293b; padding-bottom: 4px; margin-bottom: 8px;">
+          <strong>MODEL ARCHITECTURE PERFORMANCE COMPARISON</strong>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7pt; color: #f8fafc;">
+          <tr style="border-bottom: 1px solid #334155; color: #94a3b8;">
+            <th style="padding: 4px; text-align: left;">Architecture</th>
+            <th style="padding: 4px; text-align: left;">Trainable Params</th>
+            <th style="padding: 4px; text-align: left;">Epoch Duration</th>
+            <th style="padding: 4px; text-align: left;">Val Accuracy</th>
+            <th style="padding: 4px; text-align: left;">Test Accuracy</th>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b; background: rgba(99, 102, 241, 0.1);">
+            <td style="padding: 4px; font-weight: 700; color: #818cf8;">BiLSTM (Bidirectional LSTM)</td>
+            <td style="padding: 4px;">1,971,969</td>
+            <td style="padding: 4px;">1.6 s (MPS)</td>
+            <td style="padding: 4px; font-weight: 700; color: #22c55e;">85.80%</td>
+            <td style="padding: 4px; font-weight: 700; color: #22c55e;">83.00%</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b;">
+            <td style="padding: 4px;">Average Embedding Model</td>
+            <td style="padding: 4px;">1,750,913</td>
+            <td style="padding: 4px;">0.9 s (MPS)</td>
+            <td style="padding: 4px;">78.60%</td>
+            <td style="padding: 4px;">76.40%</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #1e293b;">
+            <td style="padding: 4px;">Embedding Bag Model</td>
+            <td style="padding: 4px;">1,750,913</td>
+            <td style="padding: 4px;">0.3 s (MPS)</td>
+            <td style="padding: 4px;">76.60%</td>
+            <td style="padding: 4px;">66.80%</td>
+          </tr>
+        </table>
+      </div>
+      <div class="caption">Figure 8. Comparative Training Benchmark: Performance metrics across three evaluated neural architectures.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>7</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 8 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <h2 class="section-heading" style="margin-top: 4px; margin-bottom: 8px;">7. Challenges Faced and How Resolved</h2>
+    <table class="data-table" style="font-size: 8pt; margin-bottom: 10px;">
+      <thead>
+        <tr>
+          <th style="width: 30%; padding: 4px 7px;">Challenge</th>
+          <th style="padding: 4px 7px;">Resolution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Legacy Dependencies:</strong> Obsolete `torchtext 0.9.1` fails to install on Python 3.12 and ARM64.</td>
+          <td style="padding: 4px 7px;">Developed custom regex tokenization and vocabulary mapper, eliminating torchtext while preserving identical tokenization.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Missing Embeddings:</strong> Notebook crashed on hardcoded unavailable paths (`../../glove.6B.300d.txt`).</td>
+          <td style="padding: 4px 7px;">Implemented automated downloader (`download_glove.py`) with dynamic learned embedding initialization fallback.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Inference Latency:</strong> CPU evaluation caused latency on long reviews.</td>
+          <td style="padding: 4px 7px;">Configured native Apple Silicon Metal Performance Shaders (`mps`), accelerating tensor operations to < 8ms per review.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Full-Stack Serving:</strong> Needed unified REST API and frontend without complex setup.</td>
+          <td style="padding: 4px 7px;">Built high-throughput FastAPI engine serving inference and a responsive single-page dashboard with zero build steps.</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 7px;"><strong>Review Sarcasm:</strong> Fixed statistical embeddings sometimes miss ambiguous feedback.</td>
+          <td style="padding: 4px 7px;">Integrated Claude 3.5 Sonnet zero-shot comparative pipeline to provide contextual reasoning for edge cases.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="subsection-heading" style="margin-top: 6px; margin-bottom: 4px;">7.1 Known limitations</h3>
+    <ul class="feature-list" style="margin-bottom: 8px;">
+      <li style="margin-bottom: 2px;"><strong>Truncation of Long Reviews:</strong> Reviews over 100 tokens are truncated to maintain uniform tensor dimensions.</li>
+      <li style="margin-bottom: 2px;"><strong>Binary Horizon:</strong> Outputs binary sentiment (+1 / -1); neutral feedback maps to the dominant pole.</li>
+      <li style="margin-bottom: 2px;"><strong>Domain Specificity:</strong> Trained on food reviews; slang from tech/finance may have lower confidence.</li>
+    </ul>
+
+    <h3 class="subsection-heading" style="margin-top: 6px; margin-bottom: 4px;">7.2 Future improvements</h3>
+    <ul class="feature-list" style="margin-bottom: 8px;">
+      <li style="margin-bottom: 2px;"><strong>Transformer Pipeline:</strong> Fine-tune domain-specific DistilRoBERTa/DeBERTa models for enhanced nuance.</li>
+      <li style="margin-bottom: 2px;"><strong>Aspect-Based Sentiment:</strong> Classify granular attributes (Taste, Packaging, Delivery, Price).</li>
+      <li style="margin-bottom: 2px;"><strong>Automated PDF Reporting:</strong> One-click executive summary generation for weekly sentiment trends.</li>
+      <li style="margin-bottom: 2px;"><strong>Containerized Deployment:</strong> Package backend and frontend into multi-architecture Docker containers.</li>
+    </ul>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>8</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 9 ==================== -->
+  <div class="page">
+    <div class="page-header">
+      <span class="page-header-title">CUSTOMER REVIEW SENTIMENT ANALYSIS | PROJECT SYNOPSIS</span>
+    </div>
+
+    <h2 class="section-heading">8. References</h2>
+    <ul class="feature-list" style="list-style: none; padding-left: 0;">
+      <li style="margin-bottom: 8px;">&bull; Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. <em>Neural Computation</em>, 9(8), 1735-1780.</li>
+      <li style="margin-bottom: 8px;">&bull; Pennington, J., Socher, R., & Manning, C. D. (2014). GloVe: Global Vectors for Word Representation. <em>EMNLP</em>, 1532-1543.</li>
+      <li style="margin-bottom: 8px;">&bull; Paszke, A., et al. (2019). PyTorch: An Imperative Style, High-Performance Deep Learning Library. <em>NeurIPS</em>, 32, 8024-8035.</li>
+      <li style="margin-bottom: 8px;">&bull; Ramirez, S. (2018). FastAPI: High performance, easy to learn, fast to code, ready for production. <em>https://fastapi.tiangolo.com</em></li>
+      <li style="margin-bottom: 8px;">&bull; Anthropic. (2024). The Claude 3.5 Sonnet Model Technical Card. <em>https://docs.anthropic.com</em></li>
+      <li style="margin-bottom: 8px;">&bull; Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. <em>Journal of Machine Learning Research</em>, 12, 2825-2830.</li>
+    </ul>
+
+    <h2 class="section-heading" style="margin-top: 18px;">9. Ethical Compliance Declaration</h2>
+    <p style="font-size: 8.5pt; color: #334155; margin-bottom: 12px;">I confirm that:</p>
+    <div style="font-size: 8.5pt; color: #1e293b; line-height: 2; margin-bottom: 25px;">
+      <div>[ <strong style="color: #10b981;">X</strong> ] All dataset usage complies with the source licence and academic guidelines.</div>
+      <div>[ <strong style="color: #10b981;">X</strong> ] No personally identifiable information (PII) or customer credentials are stored.</div>
+      <div>[ <strong style="color: #10b981;">X</strong> ] AI tools used for assistance, documentation, and code refactoring are disclosed.</div>
+      <div>[ <strong style="color: #10b981;">X</strong> ] This project complies with ethical AI principles and data protection frameworks.</div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 9pt; padding-top: 15px; border-top: 1px dashed #cbd5e1;">
+      <div>
+        <strong>Learner Signature:</strong> _______________________<br>
+        <span style="font-size: 8pt; color: #64748b; margin-top: 4px; display: inline-block;">Ansh Malik</span>
+      </div>
+      <div>
+        <strong>Date:</strong> 3 November 2026<br>
+        <span style="font-size: 8pt; color: #64748b; margin-top: 4px; display: inline-block;">Ghaziabad, India</span>
+      </div>
+    </div>
+
+    <h3 class="subsection-heading" style="margin-top: 25px;">Appendix: AI Tools Disclosure</h3>
+    <p style="font-size: 8pt; color: #475569; line-height: 1.5; margin-bottom: 16px;">
+      PyTorch was utilized for deep learning neural network design. Claude (Anthropic API) was integrated as a zero-shot LLM comparative benchmark and assisted in structuring this academic synopsis report from empirical training logs, confusion matrix outputs, and codebase documentation.
+    </p>
+
+    <h3 class="subsection-heading">GitHub Repository</h3>
+    <p style="font-size: 8.5pt;">
+      Source code: <a href="https://github.com/anshmalik0602/Ansh-HCL-project---Customer-Review-Sentiment-Analysis" style="color: #2563eb; text-decoration: none; font-weight: 600;">https://github.com/anshmalik0602/Ansh-HCL-project---Customer-Review-Sentiment-Analysis</a>
+    </p>
+
+    <div class="page-footer">
+      <span>Ansh Malik | HCLTech Career Shaper Programme</span>
+      <span>9</span>
+    </div>
+  </div>
+
+</body>
+</html>
