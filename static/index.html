@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Review Sentiment Analysis | AI Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at top left, #0f172a, #020617);
+      color: #f8fafc;
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-subtle {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .glow-pos {
+      box-shadow: 0 0 35px -5px rgba(34, 197, 94, 0.35);
+    }
+    .glow-neg {
+      box-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.35);
+    }
+    .progress-transition {
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 selection:bg-indigo-500 selection:text-white">
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- Top Navigation / Header -->
+    <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-chart-pie text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            Sentiment Analysis Engine
+            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">PyTorch + BiLSTM</span>
+          </h1>
+          <p class="text-xs text-slate-400">Customer Food Review Sentiment Classifier & LLM Benchmark</p>
+        </div>
+      </div>
+
+      <!-- Live Engine Badges -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <div id="deviceBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass-card-subtle text-slate-300">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-medium" id="deviceText">MPS (Apple Silicon GPU)</span>
+        </div>
+        <div class="px-3 py-1.5 rounded-lg glass-card-subtle text-slate-300">
+          <i class="fa-solid fa-cube text-indigo-400 mr-1"></i>
+          <span id="activeModelBadge">BiLSTM Model (85.8% Acc)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2">
+      <button onclick="switchTab('single')" id="tabSingle" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Single Review Predictor
+      </button>
+      <button onclick="switchTab('batch')" id="tabBatch" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60">
+        <i class="fa-solid fa-layer-group mr-2"></i>Batch Analyzer
+      </button>
+      <button onclick="switchTab('metrics')" id="tabMetrics" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60">
+        <i class="fa-solid fa-chart-line mr-2"></i>Model Performance
+      </button>
+    </div>
+
+    <!-- TAB 1: SINGLE REVIEW PREDICTOR -->
+    <div id="viewSingle" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Left Column: Input Form -->
+      <div class="lg:col-span-7 space-y-5">
+        <div class="glass-card rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <i class="fa-solid fa-pen text-indigo-400"></i> Enter Product Review
+            </label>
+            <div class="flex items-center gap-2">
+              <label for="modelSelect" class="text-xs text-slate-400">Model:</label>
+              <select id="modelSelect" class="bg-slate-900 border border-slate-700 rounded-lg text-xs px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500">
+                <option value="bilstm" selected>Bidirectional LSTM (PyTorch - 85.8%)</option>
+                <option value="embedding_bag">Embedding Bag (PyTorch)</option>
+                <option value="claude">Claude / LLM Engine</option>
+              </select>
+            </div>
+          </div>
+
+          <textarea id="reviewInput" rows="5" placeholder="Type or paste a customer food review here (e.g., 'These candies are delicious, crunchy, and taste fresh!')..." 
+            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 resize-none transition-all"></textarea>
+          
+          <div class="flex items-center justify-between mt-3 text-xs text-slate-400">
+            <span id="charCount">0 characters</span>
+            <button onclick="clearInput()" class="hover:text-slate-200 transition-colors">
+              <i class="fa-solid fa-eraser mr-1"></i> Clear text
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="mt-4 pt-4 border-t border-slate-800">
+            <p class="text-xs font-medium text-slate-400 mb-2.5 flex items-center gap-1.5">
+              <i class="fa-regular fa-lightbulb text-amber-400"></i> Try sample customer reviews:
+            </p>
+            <div class="flex flex-wrap gap-2" id="presetContainer">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Analyze Action Button -->
+          <div class="mt-6">
+            <button id="analyzeBtn" onclick="analyzeSingleReview()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+              <i class="fa-solid fa-bolt"></i> Analyze Sentiment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Outcome / Results -->
+      <div class="lg:col-span-5 space-y-5">
+        <div id="resultCard" class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300">
+          
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-5">
+            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Analysis Result</h2>
+            <span id="latencyBadge" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Ready</span>
+          </div>
+
+          <!-- Placeholder when empty -->
+          <div id="resultPlaceholder" class="text-center py-12 text-slate-500 space-y-3">
+            <div class="h-16 w-16 mx-auto rounded-full bg-slate-800/60 flex items-center justify-center text-slate-400 text-2xl">
+              <i class="fa-regular fa-comment-dots"></i>
+            </div>
+            <p class="text-sm">Click "Analyze Sentiment" or select a preset review to view prediction.</p>
+          </div>
+
+          <!-- Prediction Outcome Content (hidden by default) -->
+          <div id="resultContent" class="hidden space-y-5">
+            
+            <!-- Large Sentiment Badge -->
+            <div id="sentimentBadgeBox" class="p-5 rounded-2xl border flex items-center gap-4 transition-all">
+              <div id="sentimentIcon" class="h-14 w-14 rounded-xl flex items-center justify-center text-3xl shrink-0">
+                <!-- Injected -->
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider font-semibold opacity-75">Detected Sentiment</p>
+                <h3 id="sentimentTitle" class="text-2xl font-extrabold tracking-tight">--</h3>
+              </div>
+            </div>
+
+            <!-- Confidence Meter -->
+            <div class="glass-card-subtle p-4 rounded-xl space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-400 font-medium">Model Confidence</span>
+                <span id="confidenceText" class="font-bold text-white font-mono">0.0%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
+                <div id="confidenceBar" class="h-full rounded-full progress-transition bg-indigo-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Detailed Score Diagnostics -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="glass-card-subtle p-3 rounded-xl">
+                <p class="text-slate-400 mb-1">Continuous Score</p>
+                <p id="scoreVal" class="text-base font-bold font-mono text-white">0.00</p>
+                <span class="text-[10px] text-slate-500">> 0: Pos | &lt; 0: Neg</span>
+              </div>
+              <div class="glass-card-subtle p-3 rounded-xl">
+                <p class="text-slate-400 mb-1">Token Count</p>
+                <p id="tokenVal" class="text-base font-bold font-mono text-white">0</p>
+                <span class="text-[10px] text-slate-500">Processed words</span>
+              </div>
+            </div>
+
+            <!-- Explanation / Notes -->
+            <div id="explanationBox" class="hidden glass-card-subtle p-3 rounded-xl text-xs text-slate-300">
+              <p class="font-semibold text-slate-400 mb-1">Model Explanation:</p>
+              <p id="explanationText" class="italic"></p>
+            </div>
+
+            <!-- Tokenized Words Preview -->
+            <div class="space-y-1.5">
+              <p class="text-xs font-semibold text-slate-400">Tokens Recognized:</p>
+              <div id="tokenChips" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1">
+                <!-- Chips injected -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: BATCH ANALYZER -->
+    <div id="viewBatch" class="hidden space-y-5">
+      <div class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h2 class="text-base font-bold text-white">Batch Review Evaluation</h2>
+            <p class="text-xs text-slate-400">Analyze multiple customer reviews simultaneously (one per line)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="loadBatchPreset()" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+              <i class="fa-solid fa-list-check mr-1 text-indigo-400"></i> Load 5 Test Reviews
+            </button>
+            <button onclick="runBatchAnalysis()" id="batchBtn" class="text-xs px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-semibold text-white transition-colors">
+              <i class="fa-solid fa-play mr-1"></i> Analyze All
+            </button>
+          </div>
+        </div>
+
+        <textarea id="batchInput" rows="6" placeholder="Paste multiple reviews here, one per line..."
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-xs font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"></textarea>
+
+        <!-- Batch Results Display -->
+        <div id="batchResultsContainer" class="hidden space-y-4 pt-4 border-t border-slate-800">
+          <!-- Summary Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="glass-card-subtle p-3 rounded-xl">
+              <p class="text-xs text-slate-400">Total Reviews</p>
+              <p id="batchTotal" class="text-xl font-extrabold text-white">0</p>
+            </div>
+            <div class="glass-card-subtle p-3 rounded-xl">
+              <p class="text-xs text-emerald-400">Positive</p>
+              <p id="batchPos" class="text-xl font-extrabold text-emerald-400">0</p>
+            </div>
+            <div class="glass-card-subtle p-3 rounded-xl">
+              <p class="text-xs text-red-400">Negative</p>
+              <p id="batchNeg" class="text-xl font-extrabold text-red-400">0</p>
+            </div>
+            <div class="glass-card-subtle p-3 rounded-xl">
+              <p class="text-xs text-slate-400">Processing Time</p>
+              <p id="batchTime" class="text-xl font-extrabold text-indigo-400 font-mono">0ms</p>
+            </div>
+          </div>
+
+          <!-- Table of Results -->
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">#</th>
+                  <th class="p-3">Review</th>
+                  <th class="p-3">Sentiment</th>
+                  <th class="p-3">Score</th>
+                  <th class="p-3">Confidence</th>
+                </tr>
+              </thead>
+              <tbody id="batchTableBody" class="divide-y divide-slate-800/60 font-mono">
+                <!-- Injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: MODEL PERFORMANCE & ARCHITECTURE -->
+    <div id="viewMetrics" class="hidden space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <div class="glass-card rounded-2xl p-5 shadow-xl text-center space-y-1">
+          <p class="text-xs uppercase text-slate-400 font-semibold tracking-wider">Test Accuracy</p>
+          <h3 class="text-3xl font-extrabold text-indigo-400">83.00%</h3>
+          <p class="text-[11px] text-slate-500">Evaluated on 500 test food reviews</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 shadow-xl text-center space-y-1">
+          <p class="text-xs uppercase text-slate-400 font-semibold tracking-wider">Validation Accuracy</p>
+          <h3 class="text-3xl font-extrabold text-emerald-400">85.80%</h3>
+          <p class="text-[11px] text-slate-500">Matches author's benchmark</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 shadow-xl text-center space-y-1">
+          <p class="text-xs uppercase text-slate-400 font-semibold tracking-wider">F1 Score</p>
+          <h3 class="text-3xl font-extrabold text-violet-400">0.830</h3>
+          <p class="text-[11px] text-slate-500">Balanced Precision & Recall</p>
+        </div>
+
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-table-cells text-indigo-400"></i> Confusion Matrix (500 Test Samples)
+        </h3>
+        
+        <div class="max-w-md mx-auto grid grid-cols-2 gap-3 text-center text-xs">
+          <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+            <p class="text-emerald-400 font-semibold">True Positives</p>
+            <p class="text-2xl font-extrabold text-white mt-1">207</p>
+            <p class="text-[10px] text-slate-400">Correctly identified positive</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <p class="text-amber-400 font-semibold">False Negatives</p>
+            <p class="text-2xl font-extrabold text-white mt-1">54</p>
+            <p class="text-[10px] text-slate-400">Positive predicted as negative</p>
+          </div>
+          <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
+            <p class="text-rose-400 font-semibold">False Positives</p>
+            <p class="text-2xl font-extrabold text-white mt-1">31</p>
+            <p class="text-[10px] text-slate-400">Negative predicted as positive</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+            <p class="text-emerald-400 font-semibold">True Negatives</p>
+            <p class="text-2xl font-extrabold text-white mt-1">208</p>
+            <p class="text-[10px] text-slate-400">Correctly identified negative</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Architecture Comparison -->
+      <div class="glass-card rounded-2xl p-6 shadow-xl space-y-3">
+        <h3 class="text-sm font-bold text-white">Architecture Comparison</h3>
+        <div class="overflow-x-auto text-xs">
+          <table class="w-full text-left">
+            <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-3">Architecture</th>
+                <th class="p-3">Parameters</th>
+                <th class="p-3">Val Accuracy</th>
+                <th class="p-3">Test Accuracy</th>
+                <th class="p-3">Key Advantage</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr class="bg-indigo-500/5 font-semibold text-white">
+                <td class="p-3 flex items-center gap-1.5"><i class="fa-solid fa-crown text-amber-400"></i> BiLSTM Model</td>
+                <td class="p-3 font-mono">1.97M</td>
+                <td class="p-3 text-emerald-400 font-bold">85.80%</td>
+                <td class="p-3 text-emerald-400 font-bold">83.00%</td>
+                <td class="p-3 text-slate-400">Captures forward & backward contextual sequence</td>
+              </tr>
+              <tr>
+                <td class="p-3">Average Embedding Model</td>
+                <td class="p-3 font-mono">1.75M</td>
+                <td class="p-3">78.60%</td>
+                <td class="p-3">~76.5%</td>
+                <td class="p-3 text-slate-400">Global average embedding vector with linear head</td>
+              </tr>
+              <tr>
+                <td class="p-3">Embedding Bag Model</td>
+                <td class="p-3 font-mono">1.75M</td>
+                <td class="p-3">76.60%</td>
+                <td class="p-3">~66.8%</td>
+                <td class="p-3 text-slate-400">Fast bag-of-words lookup without intermediate tensors</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <p>Customer Review Sentiment Analysis &bull; Local PyTorch Server on macOS Apple Silicon</p>
+      <div class="flex items-center gap-4">
+        <span><i class="fa-solid fa-microchip text-slate-400 mr-1"></i> MPS Accelerated</span>
+        <a href="/docs" target="_blank" class="hover:text-indigo-400 transition-colors">API Docs (/docs)</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tab) {
+      document.getElementById('viewSingle').classList.toggle('hidden', tab !== 'single');
+      document.getElementById('viewBatch').classList.toggle('hidden', tab !== 'batch');
+      document.getElementById('viewMetrics').classList.toggle('hidden', tab !== 'metrics');
+
+      const tabs = { single: 'tabSingle', batch: 'tabBatch', metrics: 'tabMetrics' };
+      for (const [k, v] of Object.entries(tabs)) {
+        const btn = document.getElementById(v);
+        if (k === tab) {
+          btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30';
+        } else {
+          btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-800/60';
+        }
+      }
+    }
+
+    const reviewInput = document.getElementById('reviewInput');
+    const charCount = document.getElementById('charCount');
+
+    reviewInput.addEventListener('input', () => {
+      charCount.textContent = `${reviewInput.value.length} characters`;
+    });
+
+    function clearInput() {
+      reviewInput.value = '';
+      charCount.textContent = '0 characters';
+      reviewInput.focus();
+    }
+
+    // Load sample presets from server
+    async function initPresets() {
+      try {
+        const res = await fetch('/api/samples');
+        const samples = await res.json();
+        const container = document.getElementById('presetContainer');
+        container.innerHTML = '';
+
+        samples.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-[11px] text-slate-300 transition-colors text-left truncate max-w-xs';
+          btn.innerHTML = `<span class="text-indigo-400 font-semibold mr-1">${s.category}:</span> "${s.summary}"`;
+          btn.onclick = () => {
+            reviewInput.value = s.text;
+            charCount.textContent = `${s.text.length} characters`;
+            analyzeSingleReview();
+          };
+          container.appendChild(btn);
+        });
+      } catch (err) {
+        console.error('Failed to load presets:', err);
+      }
+    }
+
+    // Single Review Analysis
+    async function analyzeSingleReview() {
+      const text = reviewInput.value.trim();
+      if (!text) {
+        alert('Please enter a review text or select one of the presets.');
+        return;
+      }
+
+      const model = document.getElementById('modelSelect').value;
+      const btn = document.getElementById('analyzeBtn');
+      const originalBtnHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...`;
+
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, model })
+        });
+
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+
+        const data = await res.json();
+        renderResult(data);
+      } catch (err) {
+        alert(`Analysis error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+      }
+    }
+
+    function renderResult(data) {
+      document.getElementById('resultPlaceholder').classList.add('hidden');
+      const content = document.getElementById('resultContent');
+      content.classList.remove('hidden');
+
+      const isPos = data.sentiment === 'Positive';
+      const badgeBox = document.getElementById('sentimentBadgeBox');
+      const icon = document.getElementById('sentimentIcon');
+      const title = document.getElementById('sentimentTitle');
+      const bar = document.getElementById('confidenceBar');
+      const resultCard = document.getElementById('resultCard');
+
+      // Latency badge
+      document.getElementById('latencyBadge').textContent = `${data.latency_ms} ms (${data.model_used})`;
+
+      if (isPos) {
+        badgeBox.className = 'p-5 rounded-2xl border flex items-center gap-4 bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
+        icon.className = 'h-14 w-14 rounded-xl flex items-center justify-center text-3xl shrink-0 bg-emerald-500/20 text-emerald-400';
+        icon.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
+        title.textContent = 'POSITIVE REVIEW';
+        bar.className = 'h-full rounded-full progress-transition bg-emerald-500';
+        resultCard.classList.remove('glow-neg');
+        resultCard.classList.add('glow-pos');
+      } else {
+        badgeBox.className = 'p-5 rounded-2xl border flex items-center gap-4 bg-rose-500/10 border-rose-500/30 text-rose-400';
+        icon.className = 'h-14 w-14 rounded-xl flex items-center justify-center text-3xl shrink-0 bg-rose-500/20 text-rose-400';
+        icon.innerHTML = '<i class="fa-solid fa-thumbs-down"></i>';
+        title.textContent = 'NEGATIVE REVIEW';
+        bar.className = 'h-full rounded-full progress-transition bg-rose-500';
+        resultCard.classList.remove('glow-pos');
+        resultCard.classList.add('glow-neg');
+      }
+
+      // Confidence & metrics
+      document.getElementById('confidenceText').textContent = `${data.confidence}%`;
+      bar.style.width = `${Math.min(100, Math.max(10, data.confidence))}%`;
+      document.getElementById('scoreVal').textContent = (data.raw_score > 0 ? '+' : '') + data.raw_score.toFixed(3);
+      document.getElementById('tokenVal').textContent = data.token_count || 0;
+
+      // Explanation (if Claude)
+      const expBox = document.getElementById('explanationBox');
+      if (data.explanation) {
+        expBox.classList.remove('hidden');
+        document.getElementById('explanationText').textContent = data.explanation;
+      } else {
+        expBox.classList.add('hidden');
+      }
+
+      // Token chips
+      const chipsContainer = document.getElementById('tokenChips');
+      chipsContainer.innerHTML = '';
+      (data.tokens || []).forEach(tok => {
+        const chip = document.createElement('span');
+        chip.className = 'px-2 py-0.5 rounded bg-slate-800 text-[11px] text-slate-300 font-mono';
+        chip.textContent = tok;
+        chipsContainer.appendChild(chip);
+      });
+    }
+
+    // Batch Presets & Analysis
+    function loadBatchPreset() {
+      const sampleReviews = [
+        "These chocolate chip cookies are completely irresistible! Freshly baked taste, great crispiness.",
+        "Terrible experience. Package arrived crushed and the contents were rancid. Total waste of money.",
+        "A wonderful warm beverage for cold mornings. Mildly sweet and smells heavenly.",
+        "Gave me a massive headache and upset stomach. Tastes pure artificial chemicals.",
+        "Decent taste and crunch, though a bit too salty compared to competing brands."
+      ];
+      document.getElementById('batchInput').value = sampleReviews.join('\n');
+    }
+
+    async function runBatchAnalysis() {
+      const rawText = document.getElementById('batchInput').value.trim();
+      if (!rawText) {
+        alert('Please enter at least one review per line.');
+        return;
+      }
+
+      const reviews = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const model = document.getElementById('modelSelect').value;
+      const btn = document.getElementById('batchBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running...';
+
+      try {
+        const res = await fetch('/api/batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviews, model })
+        });
+        const data = await res.json();
+
+        document.getElementById('batchResultsContainer').classList.remove('hidden');
+        document.getElementById('batchTotal').textContent = data.count;
+        document.getElementById('batchPos').textContent = `${data.positive_count} (${data.positive_ratio}%)`;
+        document.getElementById('batchNeg').textContent = `${data.negative_count} (${data.negative_ratio}%)`;
+        document.getElementById('batchTime').textContent = `${data.latency_ms}ms`;
+
+        const tbody = document.getElementById('batchTableBody');
+        tbody.innerHTML = '';
+        data.results.forEach((r, idx) => {
+          const isPos = r.sentiment === 'Positive';
+          const tr = document.createElement('tr');
+          tr.className = isPos ? 'hover:bg-emerald-500/5' : 'hover:bg-rose-500/5';
+          tr.innerHTML = `
+            <td class="p-3 text-slate-500">${idx + 1}</td>
+            <td class="p-3 text-slate-200 max-w-md truncate" title="${r.text}">"${r.text}"</td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPos ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                ${isPos ? 'POSITIVE' : 'NEGATIVE'}
+              </span>
+            </td>
+            <td class="p-3 text-slate-300 font-mono">${(r.raw_score > 0 ? '+' : '') + r.raw_score.toFixed(2)}</td>
+            <td class="p-3 text-slate-300 font-mono">${r.confidence}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        alert('Batch analysis error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Analyze All';
+      }
+    }
+
+    // Health check on load
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        if (data.status === 'healthy') {
+          document.getElementById('deviceText').textContent = data.device.toUpperCase() + (data.mps_available ? ' (Apple Silicon GPU)' : '');
+        }
+      } catch (e) {
+        console.warn('Backend not yet reachable:', e);
+      }
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      checkHealth();
+      initPresets();
+    });
+  </script>
+</body>
+</html>
